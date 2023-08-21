@@ -90,32 +90,32 @@ class RateAppDiaLog(var context: Activity, var builder: RateBuilder) : Dialog(co
              btnNotnow?.textSize = builder.notNowSize.toFloat()
         }
         if (builder.notNow != null && builder.rateUs != null) {
-            btnRate?.setText(builder.rateUs)
-             btnNotnow?.setText(builder.notNow)
+            btnRate?.text = builder.rateUs
+            btnNotnow?.text = builder.notNow
         }
         if (builder.drawableRateUs != 0) {
             btnRate?.setBackgroundResource(builder.drawableRateUs)
         }
         if (builder.contentSize != 0) {
-            tvContent?.setTextSize(builder.contentSize.toFloat())
+            tvContent?.textSize = builder.contentSize.toFloat()
         }
         if (builder.typeface != null) {
-            tvTitle?.setTypeface(builder.typeface)
-            tvContent?.setTypeface(builder.typeface)
-            btnRate?.setTypeface(builder.typeface)
-             btnNotnow?.setTypeface(builder.typeface)
+            tvTitle?.typeface = builder.typeface
+            tvContent?.typeface = builder.typeface
+            btnRate?.typeface = builder.typeface
+            btnNotnow?.typeface = builder.typeface
         }
         if (builder.typefaceTitle != null) {
-            tvTitle?.setTypeface(builder.typefaceTitle)
+            tvTitle?.typeface = builder.typefaceTitle
         }
         if (builder.typefaceContent != null) {
-            tvContent?.setTypeface(builder.typefaceContent)
+            tvContent?.typeface = builder.typefaceContent
         }
         if (builder.typefaceRateUs != null) {
-            btnRate?.setTypeface(builder.typefaceRateUs)
+            btnRate?.typeface = builder.typefaceRateUs
         }
         if (builder.typefaceNotNow != null) {
-             btnNotnow?.setTypeface(builder.typefaceNotNow)
+            btnNotnow?.typeface = builder.typefaceNotNow
         }
         if (builder.drawableDialog != 0) {
             dialog?.setBackgroundResource(builder.drawableDialog)
@@ -123,39 +123,35 @@ class RateAppDiaLog(var context: Activity, var builder: RateBuilder) : Dialog(co
         if (builder.drawableBgStar != 0) {
             bg_star?.setBackgroundResource(builder.drawableBgStar)
         }
-         btnNotnow?.setOnClickListener(View.OnClickListener { v: View? ->
-            builder.onClickBtn!!.onclickNotNow()
+         btnNotnow?.setOnClickListener(View.OnClickListener {
+             builder.onClickBtn!!.onclickNotNow()
             dismiss()
         })
-        btnRate?.setOnClickListener(View.OnClickListener { v: View? ->
-            builder.onClickBtn!!.onClickRate(rtb!!.getRating())
-            if (rtb?.getRating()!! >= builder.numberRateInApp) {
+        btnRate?.setOnClickListener(View.OnClickListener {
+            builder.onClickBtn!!.onClickRate(rtb!!.rating)
+            if (rtb?.rating!! >= builder.numberRateInApp) {
                 if (builder.isRateInApp) {
                     reviewApp(context)
                 } else {
                     dismiss()
                 }
             } else {
-                if (rtb!!.getRating() > 0) {
+                if (rtb!!.rating > 0) {
                     dismiss()
                 }
             }
         })
         changeRating()
-        if (builder.colorRatingBar != null) rtb?.setProgressTintList(
-            ColorStateList.valueOf(
-                Color.parseColor(
-                    builder.colorRatingBar
-                )
+        if (builder.colorRatingBar != null) rtb?.progressTintList = ColorStateList.valueOf(
+            Color.parseColor(
+                builder.colorRatingBar
             )
         )
-        if (builder.colorRatingBarBg != null) rtb?.setProgressBackgroundTintList(
-            ColorStateList.valueOf(
-                Color.parseColor(builder.colorRatingBarBg)
-            )
+        if (builder.colorRatingBarBg != null) rtb?.progressBackgroundTintList = ColorStateList.valueOf(
+            Color.parseColor(builder.colorRatingBarBg)
         )
-        if (builder.numberRateDefault > 0 && builder.numberRateDefault < 6) {
-            rtb?.setRating(builder.numberRateDefault.toFloat())
+        if (builder.numberRateDefault in 1..5) {
+            rtb?.rating = builder.numberRateDefault.toFloat()
         }
     }
 
@@ -164,16 +160,16 @@ class RateAppDiaLog(var context: Activity, var builder: RateBuilder) : Dialog(co
         val request: com.google.android.play.core.tasks.Task<com.google.android.play.core.review.ReviewInfo> =
             manager.requestReviewFlow()
         request.addOnCompleteListener { task ->
-            if (task.isSuccessful()) {
-                val reviewInfo: ReviewInfo = task.getResult()
+            if (task.isSuccessful) {
+                val reviewInfo: ReviewInfo = task.result
                 val flow: Task<Void> =
                     manager.launchReviewFlow(context as Activity, reviewInfo)
-                flow.addOnCompleteListener { task2 ->
+                flow.addOnCompleteListener {
                     builder.onClickBtn?.onReviewAppSuccess()
                     dismiss()
                 }
             } else {
-                Log.e("ReviewError", "" + task.getException().toString())
+                Log.e("ReviewError", "" + task.exception.toString())
             }
         }
     }
@@ -184,14 +180,14 @@ class RateAppDiaLog(var context: Activity, var builder: RateBuilder) : Dialog(co
                 val getRating = rtb!!.rating.toString()
                 animationStar()
                 when (getRating) {
-                    "1.0" -> imgRate!!.setImageResource(builder.arrStar.get(1))
-                    "2.0" -> imgRate!!.setImageResource(builder.arrStar.get(2))
-                    "3.0" -> imgRate!!.setImageResource(builder.arrStar.get(3))
-                    "4.0" -> imgRate!!.setImageResource(builder.arrStar.get(4))
-                    "5.0" -> imgRate!!.setImageResource(builder.arrStar.get(5))
+                    "1.0" -> imgRate!!.setImageResource(builder.arrStar[1])
+                    "2.0" -> imgRate!!.setImageResource(builder.arrStar[2])
+                    "3.0" -> imgRate!!.setImageResource(builder.arrStar[3])
+                    "4.0" -> imgRate!!.setImageResource(builder.arrStar[4])
+                    "5.0" -> imgRate!!.setImageResource(builder.arrStar[5])
                     else -> {
                         rtb!!.rating = 1f
-                        imgRate!!.setImageResource(builder.arrStar.get(0))
+                        imgRate!!.setImageResource(builder.arrStar[0])
                     }
                 }
             }
